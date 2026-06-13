@@ -1,0 +1,15 @@
+{
+  "name": "adline marketplace",
+  "description": "Official adline plugin marketplace",
+  "plugins": [
+    {
+      "id": "adline",
+      "name": "adline",
+      "description": "Sponsored statusline for Claude Code — earn 50% rev-share while you build.",
+      "version": "0.1.0",
+      "author": "adline",
+      "repository": "https://github.com/adline/adline",
+      "tags": ["monetization", "statusline", "rev-share"]
+    }
+  ]
+}

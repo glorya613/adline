@@ -1,0 +1,27 @@
+{
+  "id": "adline",
+  "name": "adline",
+  "version": "0.1.0",
+  "author": "adline",
+  "description": "Earn 50% rev-share on ads shown in your Claude Code statusline. Never reads your code. Open source.",
+  "homepage": "https://adline.dev",
+  "repository": "https://github.com/adline/adline",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "start",
+      "description": "Enable adline statusline and start earning",
+      "file": "commands/start.md"
+    },
+    {
+      "name": "stop",
+      "description": "Disable adline and restore original statusline",
+      "file": "commands/stop.md"
+    },
+    {
+      "name": "stats",
+      "description": "Open your earnings dashboard",
+      "file": "commands/stats.md"
+    }
+  ]
+}

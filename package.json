@@ -1,0 +1,38 @@
+{
+  "name": "adline-cli",
+  "version": "1.0.0",
+  "description": "Earn 50% rev-share on ads shown in your Claude Code statusline.",
+  "main": "index.js",
+  "bin": {
+    "adline": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "scripts/statusline.js",
+    "scripts/sync.js",
+    "scripts/setup.sh",
+    "scripts/teardown.sh",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js",
+    "test": "echo \"Error: no test specified\\\" && exit 1"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "statusline",
+    "ads",
+    "developer-tools"
+  ],
+  "author": "Joshua Spiegler",
+  "license": "ISC",
+  "type": "commonjs",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
