@@ -12,6 +12,8 @@
     "scripts/sync.js",
     "scripts/setup.sh",
     "scripts/teardown.sh",
+    "public/",
+    "server.js",
     "README.md"
   ],
   "scripts": {
