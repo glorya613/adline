@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>adline — Ads in your Claude Code statusline</title>
+<meta name="description" content="adline puts sponsored messages in your Claude Code statusline. Publishers earn 50% rev-share. Advertisers reach 100k+ developers.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #07070f;
+    --surface: #0f0f1a;
+    --border: #1a1a2e;
+    --indigo: #6c63ff;
+    --indigo-light: #8b83ff;
+    --cyan: #00d4ff;
+    --text: #ffffff;
+    --muted: #555;
+    --subtle: #333;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: rgba(7,7,15,0.95); backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo span { color: var(--indigo); }
+  nav .links { display: flex; gap: 32px; font-size: 14px; color: var(--muted); }
+  nav .links a:hover { color: var(--text); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .btn-primary { background: var(--indigo); color: #fff; }
+  .btn-primary:hover { background: var(--indigo-light); transform: translateY(-1px); }
+  .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--indigo); color: var(--indigo); }
+
+  /* ── HERO ── */
+  .hero { text-align: center; padding: 120px 24px 80px; max-width: 800px; margin: 0 auto; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(108,99,255,.12); border: 1px solid rgba(108,99,255,.25); color: var(--indigo-light); font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; margin-bottom: 32px; }
+  .badge::before { content: '✦'; }
+  h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 700; letter-spacing: -2px; line-height: 1.1; margin-bottom: 24px; }
+  h1 em { color: var(--indigo); font-style: normal; }
+  .hero-sub { font-size: 18px; color: var(--muted); max-width: 520px; margin: 0 auto 40px; }
+  .hero-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── STATUSLINE DEMO ── */
+  .demo-wrap { max-width: 700px; margin: 64px auto; padding: 0 24px; }
+  .terminal {
+    background: #0a0a0f; border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; font-family: 'Courier New', monospace;
+  }
+  .terminal-bar { display: flex; align-items: center; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  .terminal-body { padding: 20px 16px; }
+  .t-line { color: #555; font-size: 13px; margin-bottom: 6px; }
+  .t-line .prompt { color: #6c63ff; }
+  .t-line .cmd { color: #fff; }
+  .t-statusline {
+    margin-top: 16px; padding: 10px 14px; background: #111;
+    border-top: 1px solid #1a1a2e; font-size: 13px; color: #aaa;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ad-text { color: var(--cyan); }
+  .ad-link { color: var(--indigo-light); opacity: .7; font-size: 11px; }
+
+  /* ── HOW IT WORKS ── */
+  section { padding: 80px 24px; max-width: 1000px; margin: 0 auto; }
+  h2 { font-size: 32px; font-weight: 700; letter-spacing: -1px; margin-bottom: 48px; text-align: center; }
+  h2 span { color: var(--indigo); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+  .step-num { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--indigo); text-transform: uppercase; margin-bottom: 12px; }
+  .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .step p { font-size: 14px; color: var(--muted); }
+  code { background: #111; border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; font-size: 12px; color: var(--cyan); font-family: 'Courier New', monospace; }
+
+  /* ── TWO AUDIENCES ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  .audience-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; }
+  .audience-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .audience-card p { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+  .check-list li { font-size: 14px; color: #ccc; display: flex; gap: 10px; }
+  .check-list li::before { content: '✓'; color: var(--indigo); font-weight: 700; flex-shrink: 0; }
+
+  /* ── PRICING ── */
+  #advertise { padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+  .plan-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px 20px; transition: border-color .2s, transform .2s;
+  }
+  .plan-card:hover { border-color: var(--indigo); transform: translateY(-3px); }
+  .plan-card.featured { border-color: var(--indigo); background: rgba(108,99,255,.08); }
+  .plan-name { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .plan-price { font-size: 28px; font-weight: 700; letter-spacing: -1px; margin-bottom: 4px; }
+  .plan-price span { font-size: 14px; font-weight: 400; color: var(--muted); }
+  .plan-impr { font-size: 12px; color: var(--indigo-light); margin-bottom: 6px; }
+  .plan-cpm { font-size: 11px; color: var(--muted); margin-bottom: 20px; }
+  .plan-link {
+    display: block; text-align: center; padding: 9px;
+    background: var(--indigo); color: #fff; border-radius: 7px;
+    font-size: 13px; font-weight: 600; transition: background .15s;
+  }
+  .plan-link:hover { background: var(--indigo-light); }
+
+  /* ── INSTALL ── */
+  #install { max-width: 680px; margin: 0 auto; padding: 80px 24px; text-align: center; }
+  .install-box { background: #0a0a0f; border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin: 32px 0; font-family: 'Courier New', monospace; font-size: 14px; color: var(--cyan); text-align: left; }
+  .install-box .comment { color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-size: 13px; color: var(--muted); }
+  footer .links { display: flex; gap: 24px; font-size: 13px; color: var(--muted); }
+  footer .links a:hover { color: var(--text); }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">adline<span>.</span></div>
+  <div class="links">
+    <a href="#how">How it works</a>
+    <a href="#advertise">Advertise</a>
+    <a href="#install">Install</a>
+  </div>
+  <div style="display:flex;gap:10px">
+    <a href="#install" class="btn btn-ghost">Earn rev-share</a>
+    <a href="#advertise" class="btn btn-primary">Start advertising</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">Now live</div>
+  <h1>Ads in the<br><em>Claude Code</em><br>statusline</h1>
+  <p class="hero-sub">Your developers are already staring at it. adline puts a single, unobtrusive sponsored message there — and pays publishers 50% of every dollar.</p>
+  <div class="hero-ctas">
+    <a href="#advertise" class="btn btn-primary">Start advertising →</a>
+    <a href="#install" class="btn btn-ghost">Earn rev-share</a>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="demo-wrap">
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span style="font-size:12px;color:#444;margin-left:8px">claude — ~/myproject</span>
+    </div>
+    <div class="terminal-body">
+      <div class="t-line"><span class="prompt">></span> <span class="cmd">implement dark mode toggle</span></div>
+      <div class="t-line" style="color:#444;font-size:12px;margin-top:8px">⠸ Thinking...</div>
+    </div>
+    <div class="t-statusline">
+      <span class="ad-text">✦ ⚡ Deploy in seconds — Vercel  Try free →</span>
+      <span class="ad-link">→ go.adline.dev</span>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px">The statusline rotates every 60s. Always one clean message. Never intrusive.</p>
+</div>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <h2>How it <span>works</span></h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">For publishers</div>
+      <h3>Install in 30 seconds</h3>
+      <p>Run <code>npm i -g adline-cli && adline setup</code>. One command patches your Claude Code statusline.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">For publishers</div>
+      <h3>Earn 50% rev-share</h3>
+      <p>Every impression your Claude Code session generates earns you half the CPM. Paid monthly via Stripe.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">For advertisers</div>
+      <h3>Reach developers</h3>
+      <p>100,000+ Claude Code sessions/month. Developers, not bots. Your message shown while they wait for Claude to think.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">For advertisers</div>
+      <h3>Guaranteed impressions</h3>
+      <p>Buy a monthly plan, get exactly the impressions promised. CPM drops from $10 to $5 at scale.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TWO AUDIENCES -->
+<section>
+  <h2>Two sides of <span>adline</span></h2>
+  <div class="two-col">
+    <div class="audience-card">
+      <h3>Publishers</h3>
+      <p>You use Claude Code. Now make it pay for itself.</p>
+      <ul class="check-list">
+        <li>50% of all ad revenue you generate</li>
+        <li>No tracking — only anonymous impression counts</li>
+        <li>Never reads your code or project files</li>
+        <li>One command to install, one to remove</li>
+        <li>Dashboard at adline.dev/me/your-token</li>
+      </ul>
+      <a href="#install" class="btn btn-primary">Install free →</a>
+    </div>
+    <div class="audience-card">
+      <h3>Advertisers</h3>
+      <p>Reach developers at their most focused moment.</p>
+      <ul class="check-list">
+        <li>Guaranteed impressions per month</li>
+        <li>CPM from $5 to $10 depending on volume</li>
+        <li>Single clean text message — no banners</li>
+        <li>OSC-8 hyperlinks — click opens in browser</li>
+        <li>Monthly billing, cancel anytime</li>
+      </ul>
+      <a href="#advertise" class="btn btn-primary">See pricing →</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<div id="advertise" style="padding:80px 24px;max-width:1100px;margin:0 auto">
+  <h2 style="text-align:center;font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:12px">Advertising <span style="color:var(--indigo)">plans</span></h2>
+  <p style="text-align:center;color:var(--muted);font-size:15px;margin-bottom:48px">Guaranteed impressions. CPM drops as you scale. Cancel anytime.</p>
+  <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-name">Starter</div>
+      <div class="plan-price">$50<span>/mo</span></div>
+      <div class="plan-impr">5,000 impressions</div>
+      <div class="plan-cpm">$10.00 CPM</div>
+      <a href="https://buy.stripe.com/8x24gA3q90GEaWebWg8N200" class="plan-link">Get started</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Growth</div>
+      <div class="plan-price">$100<span>/mo</span></div>
+      <div class="plan-impr">10,000 impressions</div>
+      <div class="plan-cpm">$9.95 CPM</div>
+      <a href="https://buy.stripe.com/3cIcN65yh2OM5BU6BW8N201" class="plan-link">Get started</a>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-name">Pro ✦</div>
+      <div class="plan-price">$500<span>/mo</span></div>
+      <div class="plan-impr">52,000 impressions</div>
+      <div class="plan-cpm">$9.55 CPM</div>
+      <a href="https://buy.stripe.com/28E7sM6Cl896fcu4tO8N202" class="plan-link">Get started</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Scale</div>
+      <div class="plan-price">$1,000<span>/mo</span></div>
+      <div class="plan-impr">110,000 impressions</div>
+      <div class="plan-cpm">$9.04 CPM</div>
+      <a href="https://buy.stripe.com/dRm4gA4udcpmaWe5xS8N203" class="plan-link">Get started</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Business</div>
+      <div class="plan-price">$2,500<span>/mo</span></div>
+      <div class="plan-impr">332,000 impressions</div>
+      <div class="plan-cpm">$7.53 CPM</div>
+      <a href="https://buy.stripe.com/28E14o3q9exuaWe7G08N204" class="plan-link">Get started</a>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price">$5,000<span>/mo</span></div>
+      <div class="plan-impr">1,000,000 impressions</div>
+      <div class="plan-cpm">$5.00 CPM</div>
+      <a href="https://buy.stripe.com/28EfZi8Kt2OM3tMe4o8N205" class="plan-link">Get started</a>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:24px">All plans are monthly subscriptions. Your ad runs within 24h of signup. Custom volume? <a href="mailto:hi@adline.dev" style="color:var(--indigo)">Contact us</a>.</p>
+</div>
+
+<hr class="divider">
+
+<!-- INSTALL -->
+<div id="install" style="max-width:680px;margin:0 auto;padding:80px 24px;text-align:center">
+  <h2 style="font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:16px">Install in <span style="color:var(--indigo)">30 seconds</span></h2>
+  <p style="color:var(--muted);font-size:15px;margin-bottom:8px">Works with Claude Code. Requires Node.js.</p>
+  <div class="install-box">
+    <div class="comment"># Install globally</div>
+    npm install -g adline-cli<br><br>
+    <div class="comment"># Inject into Claude Code</div>
+    adline setup<br><br>
+    <div class="comment"># Then restart Claude Code</div>
+  </div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:32px">After setup, your personal dashboard is printed. Restart Claude Code and the ad appears in the statusline.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="https://github.com/glorya613/adline" class="btn btn-ghost">View source on GitHub</a>
+    <a href="#advertise" class="btn btn-primary">Advertise instead →</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">adline<span style="color:var(--indigo)">.</span></div>
+  <p>Earn 50% rev-share on ads shown in your Claude Code statusline.</p>
+  <div class="links">
+    <a href="https://github.com/glorya613/adline">GitHub</a>
+    <a href="mailto:hi@adline.dev">hi@adline.dev</a>
+    <a href="#advertise">Advertise</a>
+  </div>
+</footer>
+
+</body>
+</html>

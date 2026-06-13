@@ -1,11 +1,12 @@
-'use strict'
 const express = require('express')
 const https   = require('https')
 const http    = require('http')
+const path    = require('path')
 const app     = express()
 const PORT    = process.env.PORT || 3001
 
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'public')))
 
 // ── Supabase config ───────────────────────────────────────────────────────────
 const SUPA_URL = process.env.SUPABASE_URL || 'https://yrisgzduscjiaepqomuc.supabase.co'
@@ -153,7 +154,25 @@ app.get('/me/:token', async (req, res) => {
 </body></html>`)
 })
 
-// ── fallback ──────────────────────────────────────────────────────────────────
+// ── GET /thanks — post-checkout landing ──────────────────────────────────────
+app.get('/thanks', (req, res) => {
+  const plan = req.query.plan || 'advertiser'
+  res.send(`<!DOCTYPE html>
+<html><head><meta charset=utf-8><title>Welcome to adline</title>
+<style>body{font-family:'Helvetica Neue',sans-serif;background:#07070f;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+.box{text-align:center;max-width:480px;padding:48px 32px}
+h1{font-size:32px;font-weight:700;margin-bottom:12px}.dot{color:#6c63ff}
+p{color:#555;font-size:15px;margin-bottom:32px}
+a{display:inline-block;padding:12px 28px;background:#6c63ff;color:#fff;border-radius:8px;font-weight:600;text-decoration:none}
+</style></head>
+<body><div class=box>
+<h1>✦ Welcome to adline<span class=dot>.</span></h1>
+<p>Your <strong>${plan}</strong> plan is confirmed. We'll have your ads running within 24 hours. Check your inbox for next steps.</p>
+<a href="/">Back to adline.dev</a>
+</div></body></html>`)
+})
+
+
 function fallbackAd() {
   return { id: 'ad_003', text: '📡 Earn 50% rev-share — adline  Join →', url: 'https://adline.dev', advertiser: 'adline', icon: '✦', ttl: 60 }
 }
