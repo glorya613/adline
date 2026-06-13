@@ -10,7 +10,7 @@ ADLINE_CONFIG="${ADLINE_DIR}/config.json"
 BACKUP="${ADLINE_DIR}/settings.backup.json"
 PLUGIN_DIR="${HOME}/.claude/plugins/adline"
 STATUSLINE_SCRIPT="${PLUGIN_DIR}/scripts/statusline.js"
-API_BASE="${ADLINE_API_BASE:-https://api.adline.dev}"
+API_BASE="https://api.adline.dev"
 SRC="${ADLINE_SRC:-direct}"
 
 # --- create adline dir ---

@@ -7,7 +7,7 @@ SETTINGS="${HOME}/.claude/settings.json"
 ADLINE_DIR="${HOME}/.adline"
 ADLINE_CONFIG="${ADLINE_DIR}/config.json"
 BACKUP="${ADLINE_DIR}/settings.backup.json"
-API_BASE="${ADLINE_API_BASE:-https://api.adline.dev}"
+API_BASE="https://api.adline.dev"
 
 # --- restore backup ---
 if [ ! -f "${BACKUP}" ]; then
