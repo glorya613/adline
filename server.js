@@ -179,6 +179,9 @@ function fallbackAd() {
   return { id: 'ad_003', text: '📡 Earn 50% rev-share — adline  Join →', url: 'https://adline.dev', advertiser: 'adline', icon: '✦', ttl: 60 }
 }
 
+// ── GET /version ──────────────────────────────────────────────────────────────
+app.get('/version', (req, res) => res.json({ version: '1.0.3', clickFix: true }))
+
 app.listen(PORT, () => {
   console.log(`adline server running on http://localhost:${PORT}`)
   console.log(`  Supabase: ${SUPA_URL}`)
