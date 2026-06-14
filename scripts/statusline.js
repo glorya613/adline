@@ -101,7 +101,7 @@ function renderAdLine(icon, adText, url) {
   const ESC = '\x1b';
   const linkOpen  = `${ESC}]8;;${url}${ESC}\\`;
   const linkClose = `${ESC}]8;;${ESC}\\`;
-  const adDisplay = `${icon} ${adText} → go.adline.dev`;
+  const adDisplay = `${icon} ${adText}`;
   return ` ${linkOpen}${adDisplay}${linkClose}`;
 }
 

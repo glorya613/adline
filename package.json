@@ -1,6 +1,6 @@
 {
   "name": "adline-cli",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Earn 50% rev-share on ads shown in your Claude Code statusline.",
   "main": "index.js",
   "bin": {

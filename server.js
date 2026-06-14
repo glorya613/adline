@@ -82,9 +82,11 @@ app.post('/api/click', async (req, res) => {
 // ── GET /c/:impressionId — click redirect ─────────────────────────────────────
 app.get('/c/:impressionId', async (req, res) => {
   try {
-    const { data: ads } = await supabase('/ads?active=eq.true&select=url')
+    // impressionId format: adId_timestamp — extract adId
+    const adId = req.params.impressionId.replace(/_\d+$/, '')
+    const { data: ads } = await supabase(`/ads?id=eq.${adId}&select=url`)
     const url = ads?.[0]?.url || 'https://adline.dev'
-    await supabase('/clicks', 'POST', { impression_id: req.params.impressionId })
+    await supabase('/clicks', 'POST', { impression_id: req.params.impressionId, ad_id: adId })
     res.redirect(302, url)
   } catch { res.redirect(302, 'https://adline.dev') }
 })

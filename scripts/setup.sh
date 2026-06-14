@@ -6,7 +6,7 @@ SETTINGS="${HOME}/.claude/settings.json"
 ADLINE_DIR="${HOME}/.adline"
 ADLINE_CONFIG="${ADLINE_DIR}/config.json"
 BACKUP="${ADLINE_DIR}/settings.backup.json"
-API_BASE="https://api.adline.dev"
+API_BASE="https://api-production-597f.up.railway.app"
 SRC="${ADLINE_SRC:-direct}"
 
 # Resolve statusline.js path — works for npm -g install AND git clone
