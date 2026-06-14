@@ -18,7 +18,7 @@ const IMP_LOG      = path.join(ADLINE_DIR, 'impressions.log');
 const SYNC_LOCK    = path.join(ADLINE_DIR, 'sync.lock');
 const SYNC_TS_FILE = path.join(ADLINE_DIR, 'last_sync.txt');
 
-const API_BASE     = process.env.ADLINE_API_BASE || 'https://api.adline.dev';
+const API_BASE     = process.env.ADLINE_API_BASE || 'https://api-production-597f.up.railway.app';
 const SYNC_INTERVAL_MS = 60_000;
 const HARD_TIMEOUT_MS  = 45; // bail out before 50ms limit
 

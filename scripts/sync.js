@@ -10,7 +10,7 @@ const fs    = require('fs');
 const path  = require('path');
 const https = require('https');
 
-const API_BASE    = process.env.ADLINE_API_BASE || 'https://api.adline.dev';
+const API_BASE    = process.env.ADLINE_API_BASE || 'https://api-production-597f.up.railway.app';
 const ADLINE_DIR  = process.env.ADLINE_DIR || path.join(require('os').homedir(), '.adline');
 const USER_ID     = process.env.ADLINE_USER_ID;
 const CACHE_FILE  = path.join(ADLINE_DIR, 'current.json');
